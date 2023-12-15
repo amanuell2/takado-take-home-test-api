@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -27,7 +28,14 @@ type PokemonList struct {
 }
 
 func readFile() (*PokemonList, error) {
-	file, err := os.Open("./pokemon.json")
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(dir)
+
+	file, err := os.Open(dir + "/pokemon.json")
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -79,7 +87,7 @@ func init() {
 	app.Group("/api")
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{"http://localhost:3000", "https://takado-take-home-test.vercel.app"},
 		AllowMethods: []string{"GET"},
 	}))
 
