@@ -1,20 +1,13 @@
-package api
+package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-)
-
-var (
-	app *gin.Engine
 )
 
 type Pokemon struct {
@@ -28,14 +21,7 @@ type PokemonList struct {
 }
 
 func readFile() (*PokemonList, error) {
-
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(dir)
-
-	file, err := os.Open(dir + "/pokemon.json")
+	file, err := os.Open("pokemon.json")
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -81,27 +67,18 @@ func searchHandler(c *gin.Context, pokemons *PokemonList) {
 		"pokemon": result,
 	})
 }
-
-func init() {
-	app = gin.New()
-	app.Group("/api")
-
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000", "https://takado-take-home-test.vercel.app"},
-		AllowMethods: []string{"GET"},
-	}))
+func main() {
+	r := gin.Default()
+	api := r.Group("/api")
 
 	pokemons, err := readFile()
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.GET("/search", func(c *gin.Context) {
+
+	api.GET("/search", func(c *gin.Context) {
 		searchHandler(c, pokemons)
 	})
 
-	app.Run() // listen and serve on 0.0.0.0:8080
-}
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	app.ServeHTTP(w, r)
+	r.Run() // listen and serve on 0.0.0.0:8080
 }
