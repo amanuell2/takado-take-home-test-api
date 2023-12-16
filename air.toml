@@ -1,0 +1,4 @@
+   root = "."
+   build = "go build -o ./tmp/main ./cmd/main"
+   run = "./tmp/main"
+   watch = ["cmd", "internal", "pkg"]

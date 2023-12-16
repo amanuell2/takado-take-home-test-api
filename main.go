@@ -35,6 +35,7 @@ func readFile() (*PokemonList, error) {
 	}
 
 	var pokemons PokemonList
+
 	err = json.Unmarshal(data, &pokemons)
 	if err != nil {
 		log.Fatal(err)
@@ -63,18 +64,19 @@ func searchHandler(c *gin.Context, pokemons *PokemonList) {
 	result := filterPokemon(pokemons, query)
 
 	c.JSON(200, gin.H{
-		"result": result,
+		"pokemon": result,
 	})
 }
-
 func main() {
 	r := gin.Default()
+	api := r.Group("/api")
+
 	pokemons, err := readFile()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	r.GET("/search", func(c *gin.Context) {
+	api.GET("/search", func(c *gin.Context) {
 		searchHandler(c, pokemons)
 	})
 
