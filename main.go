@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -69,6 +70,12 @@ func searchHandler(c *gin.Context, pokemons *PokemonList) {
 }
 func main() {
 	r := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000", "https://takado-take-home-test.vercel.app"} // Replace with your frontend origin
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	r.Use(cors.New(config))
+
 	api := r.Group("/api")
 
 	pokemons, err := readFile()
